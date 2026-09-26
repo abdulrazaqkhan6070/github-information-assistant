@@ -1,0 +1,152 @@
+{
+  "name": "Github information assistant workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b4df82b0-b24a-4f53-8e17-5ff2e92739b3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 4000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "fd724f78-f339-4911-a5e2-3bf42cb6649e",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xf4w6OsfT2YBe7lp",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "sessionId",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "13768e37-a5ff-4d8e-b1e1-3c597e953d41",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        48,
+        32
+      ],
+      "id": "feed4e2d-8d10-4e2b-9806-513bd96c7528",
+      "name": "When chat message received",
+      "webhookId": "53222bc1-a75b-444b-881f-d22e980a5fd1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "fetches public user profile,repo",
+        "url": "=https://api.github.com/users/{{ $fromAI('username', 'The GitHub username requested by the user') }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User_Agent",
+              "value": "n8n_app"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        384,
+        208
+      ],
+      "id": "6bba903d-fe44-45c0-a3a1-5a771d65ca1e",
+      "name": "github_data"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "github_data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1dcc5c96-cc9d-4a18-9a5a-9d2a3446f2c5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "238a3cdfc4541c2609a9fe9f960a209fe91e7a5d926d2b0d332018188e0bbe52"
+  },
+  "nodeGroups": [],
+  "id": "14HIgUn140M6PTmh",
+  "tags": []
+}
